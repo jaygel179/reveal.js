@@ -7,7 +7,9 @@
 		<title>reveal.js</title>
 
 		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/black.css">
+		<link rel="stylesheet" href="css/theme/night.css">
+		<link rel="stylesheet" href="bower_components/es-yowzers-theme/yowzers/bootstrap.css">
+		<link rel="stylesheet" href="css/base.css">
 
 		<!-- Theme used for syntax highlighting of code -->
 		<link rel="stylesheet" href="lib/css/zenburn.css">
@@ -24,8 +26,126 @@
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
+				<section>
+					<h1>Introduction to JSON Web Tokens</h1>
+				</section>
+				<section>
+					<section>
+						<h2>What is JSON Web Token?</h2>
+					</section>
+					<section>
+						<p>JSON Web Token (JWT)</p>
+						<ul>
+							<li>is an open standard (RFC 7519) that defines a compact and self-contained way for securely transmitting information between parties as a JSON object</li>
+						</ul>
+					</section>
+					<section>
+						<ul>
+							<li><strong>Compact</strong>: Because of its smaller size, JWTs can be sent through an URL, POST parameter, or inside an HTTP header.</li>
+						</ul>
+						<hr>
+						<ul>
+							<li><strong>Self-contained</strong>: The payload contains all the required information about the user, avoiding the need to query the database more than once</li>
+						</ul>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2>What does a JWT look like?</h2>
+					</section>
+					<section>
+						<p>JSON Web Tokens consist of three parts separated by dots (.)</p>
+						<ul>
+							<li><span class="text-info">Header</span></li>
+							<li><span class="text-warning">Payload</span></li>
+							<li><span class="text-primary">Signature</span></li>
+						</ul>
+						<p>JWT typically looks like the following</p>
+						<p><span class="text-info">xxxx</span>.<span class="text-warning">yyyyyyyy</span>.<span class="text-primary">zzzz</span></p>
+					</section>
+					<section>
+						<h3 class="text-info">Header</h3>
+						<p>The header typically consists of two parts: the type of the token, which is JWT, and the hashing algorithm being used, such as HMAC SHA256 or RSA.</p>
+						<pre><code>{
+    "alg": "HS256",
+    "typ": "JWT",
+}</code></pre>
+					</section>
+					<section>
+						<h3 class="text-warning">Payload</h3>
+						<p>The second part of the token is the payload, which contains the claims.</p>
+						<ul>
+							<li><strong>Reserved claims</strong>: These is a set of predefined claims which are not mandatory but recommended. Some of them are <strong>iss</strong> (issuer), <strong>exp</strong> (expiration time), <strong>sub</strong> (subject), <strong>aud</strong> (audience), and others.</li>
+							<li><strong>Public claims</strong>: These can be defined at will by those using JWTs</li>
+						</ul>
+						<pre><code>{
+    "sub": "1234567890",
+    "name": "Jay Ar",
+    "admin": true,
+}</code></pre>
+							
+					</section>
+					<section>
+						<h3 class="text-primary">Signature</h3>
+						<p>To create the signature part you have to take the encoded header, the encoded payload, a secret, the algorithm specified in the header, and sign that.</p>
+						<p>For example if you want to use the HMAC SHA256 algorithm, the signature will be created in the following way:</p>
+						<pre><code>HMACSHA256(base64UrlEncode(header) + "." + base64UrlEncode(payload), secret)</code></pre>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2>How do JSON Web Tokens work?</h2>
+					</section>
+					<section>
+						<p>In authentication, when the user successfully logs in using his credentials, a JSON Web Token will be returned and must be saved locally</p>
+						<p>Whenever the user wants to access a protected route or resource, the user agent should send the JWT, typically in the Authorization header using the Bearer <schema class=""></schema></p>
+						<pre><code>Authorization: Bearer {{ token }}</code></pre>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2>Benefits of using a token-based approach</h2>
+					</section>
+					<section>
+						<ul>
+							<li><strong>Cross-domain / CORS</strong>: it allows you to make AJAX calls to any server.</li>
+							<li><strong>Stateless</strong>: there is no need to keep a session store, the token is a self-contanined entity that conveys all the user information.</li>
+							<li><strong>Decoupling</strong>: you are not tied to a particular authentication scheme.</li>
+							<li><strong>CRSF</strong>: since you are not relying on cookies, you don't need to protect against cross site requests.</li>
+						</ul>
+					</section>
+				</section>
+				<section id="compare">
+					<section>
+						<h2>Cookie vs Token Authentication - Recap</h2>
+					</section>
+					<section>
+						<img class="image" src="img/cookie.png" />
+					</section>
+					<section>
+						<ol>
+							<li>User enters their login credentials</li>
+							<li>Server verifies the credentials are correct and creates a session which is then stored in a database</li>
+							<li>A cookie with the session ID is placed in the users browser</li>
+							<li>On subsequent requests, the session ID is verified against the database and if valid the request processed</li>
+							<li>Once a user logs out of the app, the session is destroyed both client and server side</li>
+						</ol>
+					</section>
+					<section>
+						<img class="image" src="img/token	.png" />
+					</section>
+					<section>
+						<ol>
+							<li>User enters their login credentials</li>
+							<li>Server verifies the credentials are correct and returns a signed token</li>
+							<li>This token is stored client-side, most commonly in local storage - but can be stored in session storage or a cookie as well</li>
+							<li>Subsequent requests to the server include this token as an additional Authorization header or through one of the other methods mentioned above</li>
+							<li>The server decodes the JWT and if the token is valid processes the request</li>
+							<li>Once a user logs out, the token is destroyed client-side, no interaction with the server is necessary</li>
+						</ol>
+					</section>
+				</section>
+				<section>End</section>
 			</div>
 		</div>
 
